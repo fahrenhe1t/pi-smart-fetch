@@ -2,7 +2,12 @@
 
 `pi-smart-fetch` adds smarter web fetching tools to pi.dev.
 
-![pi Smart Fetch](https://raw.githubusercontent.com/Thinkscape/agent-smart-fetch/main/packages/pi-smart-fetch/demo.gif)
+**This is a maintained fork** of [`Thinkscape/agent-smart-fetch`](https://github.com/Thinkscape/agent-smart-fetch) (the `packages/pi-smart-fetch` subpackage), extracted into a standalone pi package so it can be installed directly from git. The fork carries two fixes over the upstream `0.3.17`:
+
+- **Host-provided deps fixed** — `@earendil-works/pi-tui` and `@sinclair/typebox` are declared as `peerDependencies` (`"*"`) and externalized at build time, so they are no longer bundled into `dist/index.js`. This clears pi's *"Host-provided extension packages must be declared in peerDependencies"* warning and the duplicate-runtime-module risk.
+- **`defuddle` bumped to `^0.19.4`** — pulls `mathml-to-latex@1.8.0` → `@xmldom/xmldom` (advisory-clean), resolving the high-severity `@xmldom/xmldom` audit.
+
+![pi Smart Fetch](https://raw.githubusercontent.com/fahrenhe1t/pi-smart-fetch/main/demo.gif)
 
 ## Features
 
@@ -34,18 +39,35 @@ Notes:
 
 ## Install
 
-From npm:
+This package is consumed from its git repository (a built `dist/` is committed, so pi does not need Bun at install time — it just runs `npm install` for runtime deps):
 
 ```bash
-pi install npm:pi-smart-fetch
+pi install git:github.com/fahrenhe1t/pi-smart-fetch@<commit-sha>
 ```
 
-From a local checkout:
+In `~/.pi/agent/settings.json`, that is a single entry in the `packages` array:
 
-```bash
-gh repo clone Thinkscape/agent-smart-fetch
-pi install agent-smart-fetch/packages/pi-smart-fetch
+```json
+{ "packages": [ "git:github.com/fahrenhe1t/pi-smart-fetch@<commit-sha>" ] }
 ```
+
+Pin to a commit SHA for reproducibility; update the SHA (or run `pi update --extensions`) to pick up changes.
+
+## Maintaining this fork
+
+The source of truth is the monorepo fork at `~/projects/agent-smart-fetch` (which tracks `upstream` → `Thinkscape/agent-smart-fetch`). This standalone package (`~/projects/pi-smart-fetch`) is what pi actually installs, with a **committed** `dist/`.
+
+To apply an upstream change (or any fix) and republish:
+
+1. Make the change in `~/projects/agent-smart-fetch/packages/pi-smart-fetch` and commit.
+2. Run the publish script:
+   ```bash
+   ~/projects/pi-smart-fetch/scripts/rebuild-and-publish.sh
+   ```
+   It rebuilds `dist/` in the monorepo (`bun run build:pi`), syncs `dist/` + `package.json` into this repo, commits, and pushes — then prints the new commit SHA.
+3. Update the pinned SHA in `~/.pi/agent/settings.json` and restart pi.
+
+`scripts/rebuild-and-publish.sh` is the only thing you normally need to remember; it keeps the standalone package in sync with the monorepo fork automatically.
 
 ## Pi tools
 
@@ -106,6 +128,6 @@ Notes:
 - Project `.pi/settings.json` overrides global `~/.pi/agent/settings.json`
 - Legacy `webFetch*` aliases are still supported
 
-## Dev and publishing note
+## Dev note
 
-This repo uses Bun for local development, tests, and workspace scripts. Package publishing still goes through `npm publish` in CI so npm Trusted Publishing can be used.
+The monorepo fork (`agent-smart-fetch`) uses Bun for local development, tests, and builds. This standalone repo is the *published* pi package: it ships a prebuilt `dist/` and is installed by pi via a git source (pi runs `npm install` for runtime deps; it does not build). Rebuilds happen in the monorepo fork and are synced here by `scripts/rebuild-and-publish.sh`.
