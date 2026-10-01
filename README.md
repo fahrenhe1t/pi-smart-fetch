@@ -55,19 +55,11 @@ Pin to a commit SHA for reproducibility; update the SHA (or run `pi update --ext
 
 ## Maintaining this fork
 
-The source of truth is the monorepo fork at `~/projects/agent-smart-fetch` (which tracks `upstream` → `Thinkscape/agent-smart-fetch`). This standalone package (`~/projects/pi-smart-fetch`) is what pi actually installs, with a **committed** `dist/`.
+This is a maintained fork. The upstream source of truth is the `packages/pi-smart-fetch` subpackage of [`Thinkscape/agent-smart-fetch`](https://github.com/Thinkscape/agent-smart-fetch).
 
-To apply an upstream change (or any fix) and republish:
-
-1. Make the change in `~/projects/agent-smart-fetch/packages/pi-smart-fetch` and commit.
-2. Run the publish script:
-   ```bash
-   ~/projects/pi-smart-fetch/scripts/rebuild-and-publish.sh
-   ```
-   It rebuilds `dist/` in the monorepo (`bun run build:pi`), syncs `dist/` + `package.json` into this repo, commits, and pushes — then prints the new commit SHA.
-3. Update the pinned SHA in `~/.pi/agent/settings.json` and restart pi.
-
-`scripts/rebuild-and-publish.sh` is the only thing you normally need to remember; it keeps the standalone package in sync with the monorepo fork automatically.
+- The standalone package here ships a **prebuilt `dist/`** and is installed by pi via a git source (pi runs `npm install` for runtime deps; it does not build).
+- Maintenance tooling lives in `scripts/rebuild-and-publish.sh`. Run it from a checked-out fork to rebuild `dist/`, sync it here, commit, and push — it prints the new commit SHA to pin in your pi settings.
+- Environment-specific, maintainer-only instructions (local paths, upstream sync workflow) live in `MAINTAINERS.md`, which is **not committed** to this repository.
 
 ## Pi tools
 
