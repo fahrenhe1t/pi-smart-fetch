@@ -1,0 +1,58 @@
+{
+  "name": "pi-smart-fetch",
+  "version": "0.3.17",
+  "type": "module",
+  "description": "Smart web_fetch with desktop-browser TLS impersonation and defuddle extraction. Fork maintained by fahrenhe1t (fixes host-provided pi-tui/typebox bundling and defuddle/xmldom audit).",
+  "license": "MIT",
+  "author": "Thinkscape",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fahrenhe1t/pi-smart-fetch.git"
+  },
+  "homepage": "https://github.com/fahrenhe1t/pi-smart-fetch",
+  "bugs": {
+    "url": "https://github.com/fahrenhe1t/pi-smart-fetch/issues"
+  },
+  "keywords": [
+    "pi-package",
+    "pi",
+    "smart-fetch",
+    "defuddle",
+    "wreq-js",
+    "content-extraction",
+    "web-fetch",
+    "tls-fingerprinting"
+  ],
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist/",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=24.18.0"
+  },
+  "pi": {
+    "extensions": [
+      "./dist/index.js"
+    ],
+    "image": "https://raw.githubusercontent.com/fahrenhe1t/pi-smart-fetch/main/demo.gif"
+  },
+  "dependencies": {
+    "wreq-js": "^2.3.1",
+    "defuddle": "^0.19.4",
+    "linkedom": "^0.18.13"
+  },
+  "peerDependencies": {
+    "@earendil-works/pi-coding-agent": "*",
+    "@earendil-works/pi-tui": "*",
+    "@sinclair/typebox": "*"
+  }
+}
